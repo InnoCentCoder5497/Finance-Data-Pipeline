@@ -1,2 +1,4 @@
 data-location/
 tmp/
+.env
+jar_files
