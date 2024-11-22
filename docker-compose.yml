@@ -45,7 +45,7 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - 'E:\projects\spark_cluster\data-location\dbdata:/var/lib/postgresql/data:rw'
+      - 'E:\projects\spark_cluster\dbdata:/var/lib/postgresql/data:rw'
 
   db-pgadmin:
     image: dpage/pgadmin4
