@@ -28,7 +28,7 @@ def main():
 
     print(f'Loading {mcc_df.count()} Records in warehouse')
 
-    write_rows_to_db(mcc_df, 'mcc')
+    write_rows_to_db(mcc_df, 'mcc', mode='overwrite')
     
     print('MCC load complete')
 
