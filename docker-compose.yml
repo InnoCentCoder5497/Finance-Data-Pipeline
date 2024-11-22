@@ -54,6 +54,8 @@ services:
     environment:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+    depends_on:
+      - db-warehouse
 
   backend:
     build: 
@@ -61,3 +63,18 @@ services:
       dockerfile: Dockerfile
     ports:
       - '5000:5000'
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    restart: unless-stopped
+    # if you are running as root then set it to 0
+    # else find the right id with the id -u command
+    user: '0'
+    ports:
+      - '3000:3000'
+    # adding the mount volume point which we create earlier
+    volumes:
+      - 'E:\projects\spark_cluster\dashboarddata:/var/lib/grafana'
+    depends_on:
+      - db-warehouse

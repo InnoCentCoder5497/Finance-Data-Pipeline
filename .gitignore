@@ -4,3 +4,4 @@ tmp/
 jar_files
 .venv
 dbdata/
+dashboarddata/
