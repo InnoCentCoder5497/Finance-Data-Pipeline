@@ -15,6 +15,19 @@ def write_rows_to_db(df, table_name, mode='append'):
         .mode(mode) \
         .save()
 
+def read_rows_to_df(table_name, query = None):
+    if not query:
+        query = f'select * from {table_name}'
+        
+    df = spark.read.format('jdbc') \
+        .option("url", "jdbc:postgresql://spark_cluster-db-warehouse-1:5432/postgres") \
+        .option("query", query) \
+        .option("user", "postgres") \
+        .option("password", "postgres_pass") \
+        .load()
+    print(f'Loaded {df.count()} rows from {table_name}')
+    return df
+
 def main(args):
     landing_file = args.filename
     processed_dir = '/data/processed'
@@ -35,9 +48,9 @@ def main(args):
         ('merchant_state', 'string'),
         ('zip', 'integer'),
         ('mcc', 'integer'),
-        ('errors', 'string')
+        ('trans_errors', 'string')
     ]
-
+    
     column_order = [value[0] for value in column_list]
     column_with_types = [f'{value[0]}:{value[1]}' for value in column_list]
     column_with_types = ','.join(column_with_types)
@@ -55,18 +68,20 @@ def main(args):
     df = df.withColumnRenamed('id', 'trans_id')
     # rename date to trans_date
     df = df.withColumnRenamed('date', 'trans_date')
+    # rename errors to trans_errors
+    df = df.withColumnRenamed('errors', 'trans_errors')
 
     # drop excess columns and select in order
     df = df.drop('amount')
-    df = df.select(column_order)
-
-    df.printSchema()
-
-    print(f'Loading {trans_df.count()} Records in warehouse')
+    df = df.select(column_order).dropDuplicates()
     
-    print(f'{trans_df.distinct().count()}')
-
-    # write_rows_to_db(mcc_df, 'mcc', mode='overwrite')
+    hist_query = 'select distinct trans_id from transactions'
+    hist_df = read_rows_to_df('transactions', query=hist_query)
+    
+    df = df.join(hist_df, df.trans_id == hist_df.trans_id, how='leftanti')
+    
+    write_rows_to_db(df, 'transactions', mode='append')
+    print(f'Loaded {df.count()} Records in warehouse')
     
     # print('MCC load complete')
     print(f'Moving {landing_file} to {processed_file}')
