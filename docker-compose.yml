@@ -1,6 +1,8 @@
 services:
   spark:
-    image: docker.io/bitnami/spark:3.5.3
+    build: 
+      context: spark-master
+      dockerfile: Dockerfile
     environment:
       - SPARK_MODE=master
       - SPARK_RPC_AUTHENTICATION_ENABLED=no
@@ -16,7 +18,7 @@ services:
       - "host.docker.internal:${HOST_IP}"
     volumes:
       - 'E:\projects\spark_cluster\tmp:/tmp'
-      - 'E:\projects\spark_cluster\data-location:/data:rw'
+      - 'E:\projects\spark_cluster\data-bucket:/data:rw'
       - 'E:\projects\spark_cluster\scripts:/scripts:rw'
       - 'E:\projects\spark_cluster\jar_files:/extra_jars'
   spark-worker:
@@ -37,44 +39,44 @@ services:
       - "host.docker.internal:${HOST_IP}"
     volumes:
         - 'E:\projects\spark_cluster\tmp:/tmp'
-        - 'E:\projects\spark_cluster\data-location:/data:rw'
+        - 'E:\projects\spark_cluster\data-bucket:/data:rw'
         - 'E:\projects\spark_cluster\jar_files:/extra_jars'
-  db-warehouse:
-    image: postgres:12.21
-    environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    volumes:
-      - 'E:\projects\spark_cluster\dbdata:/var/lib/postgresql/data:rw'
+  # db-warehouse:
+  #   image: postgres:12.21
+  #   environment:
+  #     - PGDATA=/var/lib/postgresql/data/pgdata
+  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #   volumes:
+  #     - 'E:\projects\spark_cluster\dbdata:/var/lib/postgresql/data:rw'
 
-  db-pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - '5050:80'
-    environment:
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-    depends_on:
-      - db-warehouse
+  # db-pgadmin:
+  #   image: dpage/pgadmin4
+  #   ports:
+  #     - '5050:80'
+  #   environment:
+  #     - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+  #     - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+  #   depends_on:
+  #     - db-warehouse
 
-  backend:
-    build: 
-      context: ingestion-backend
-      dockerfile: Dockerfile
-    ports:
-      - '5000:5000'
+  # backend:
+  #   build: 
+  #     context: ingestion-backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '5000:5000'
 
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    restart: unless-stopped
-    # if you are running as root then set it to 0
-    # else find the right id with the id -u command
-    user: '0'
-    ports:
-      - '3000:3000'
-    # adding the mount volume point which we create earlier
-    volumes:
-      - 'E:\projects\spark_cluster\dashboarddata:/var/lib/grafana'
-    depends_on:
-      - db-warehouse
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   restart: unless-stopped
+  #   # if you are running as root then set it to 0
+  #   # else find the right id with the id -u command
+  #   user: '0'
+  #   ports:
+  #     - '3000:3000'
+  #   # adding the mount volume point which we create earlier
+  #   volumes:
+  #     - 'E:\projects\spark_cluster\dashboarddata:/var/lib/grafana'
+  #   depends_on:
+  #     - db-warehouse

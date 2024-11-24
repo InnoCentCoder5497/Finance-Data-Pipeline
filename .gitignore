@@ -5,3 +5,4 @@ jar_files
 .venv
 dbdata/
 dashboarddata/
+data-bucket/
