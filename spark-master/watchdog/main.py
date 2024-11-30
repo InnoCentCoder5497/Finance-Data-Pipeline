@@ -25,6 +25,12 @@ FILE_EVENT_CONFIG = [
         'directory':'/data/landing',
         'pattern': r'^users.+\.csv$',
         'job': '/scripts/load_users.py'
+    },
+    {
+        'name': 'Load Cards',
+        'directory':'/data/landing',
+        'pattern': r'^cards.+\.csv$',
+        'job': '/scripts/load_cards.py'
     }
 ]
 
@@ -37,8 +43,7 @@ class MyEventHandler(FileSystemEventHandler):
             filename = os.path.basename(key)
             for config in FILE_EVENT_CONFIG:
                 if config['directory'] == directory and re.match(config['pattern'], filename):
-                    print(f'Running Spark job {config['name']} for file: {key}')
-                    print(f"Command: {['spark-submit', f' {config['job']} {key}']}")
+                    print(f'Running Spark job {config['name']} for file: {key}, Job: {config['job']}')
                     command = SPARK_SUBMIT_CMD + [ config['job'], key ]
                     subprocess.run(command)
 

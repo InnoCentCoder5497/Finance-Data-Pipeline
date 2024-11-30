@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS public.transactions
     mcc integer NOT NULL,
     trans_errors character varying(2000) COLLATE pg_catalog."default",
     CONSTRAINT transactions_pkey PRIMARY KEY (trans_id)
-)
+);
 
 -- Table: public.users
 
@@ -46,10 +46,31 @@ CREATE TABLE IF NOT EXISTS public.users
     credit_score integer NOT NULL,
     num_credit_cards integer NOT NULL,
     CONSTRAINT users_pkey PRIMARY KEY (client_id)
-)
+);
+
+-- Table: public.users
+
+CREATE TABLE public.cards
+(
+    card_id integer NOT NULL,
+    client_id integer NOT NULL,
+    brand character varying(100),
+    type character varying(100),
+    card_number bigint NOT NULL,
+    expires date NOT NULL,
+    acct_open_date date NOT NULL,
+    cvv integer NOT NULL,
+    has_chip character varying(1) NOT NULL,
+    num_cards_issued integer NOT NULL,
+    credit_limit double precision NOT NULL,
+    year_pin_last_changed integer,
+    card_on_dark_web character varying(1),
+    PRIMARY KEY (card_id)
+);
 
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.transactions OWNER to postgres;
 ALTER TABLE IF EXISTS public.mcc OWNER to postgres;
 ALTER TABLE IF EXISTS public.users OWNER to postgres;
+ALTER TABLE IF EXISTS public.cards OWNER to postgres;
