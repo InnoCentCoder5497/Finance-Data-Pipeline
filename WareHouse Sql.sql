@@ -1,9 +1,14 @@
+
+-- Table: public.mcc
+
 CREATE TABLE public.mcc
 (
     mcc_code integer NOT NULL,
     mcc_desc character varying(500),
     PRIMARY KEY (mcc_code)
 );
+
+-- Table: public.transactions
 
 CREATE TABLE IF NOT EXISTS public.transactions
 (
@@ -23,7 +28,28 @@ CREATE TABLE IF NOT EXISTS public.transactions
     CONSTRAINT transactions_pkey PRIMARY KEY (trans_id)
 )
 
+-- Table: public.users
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    client_id integer NOT NULL,
+    gender character varying(1) COLLATE pg_catalog."default" NOT NULL,
+    birth_year integer NOT NULL,
+    birth_month integer,
+    retirement_age integer NOT NULL,
+    address character varying(500) COLLATE pg_catalog."default",
+    latitude double precision,
+    longitude double precision,
+    per_capita_income double precision NOT NULL,
+    yearly_income double precision NOT NULL,
+    total_debt double precision NOT NULL,
+    credit_score integer NOT NULL,
+    num_credit_cards integer NOT NULL,
+    CONSTRAINT users_pkey PRIMARY KEY (client_id)
+)
+
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.transactions OWNER to postgres;
 ALTER TABLE IF EXISTS public.mcc OWNER to postgres;
+ALTER TABLE IF EXISTS public.users OWNER to postgres;

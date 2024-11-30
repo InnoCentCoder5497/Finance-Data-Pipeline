@@ -19,6 +19,12 @@ FILE_EVENT_CONFIG = [
         'directory':'/data/landing',
         'pattern': r'^transactions.+\.csv$',
         'job': '/scripts/load_transactions.py'
+    },
+    {
+        'name': 'Load Users',
+        'directory':'/data/landing',
+        'pattern': r'^users.+\.csv$',
+        'job': '/scripts/load_users.py'
     }
 ]
 
