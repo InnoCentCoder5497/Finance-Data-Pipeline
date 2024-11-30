@@ -79,9 +79,9 @@ def main(args):
     hist_df = read_rows_to_df('transactions', query=hist_query)
     
     df = df.join(hist_df, df.trans_id == hist_df.trans_id, how='leftanti')
-    
-    write_rows_to_db(df, 'transactions', mode='append')
     print(f'Loaded {df.count()} Records in warehouse')
+    write_rows_to_db(df, 'transactions', mode='append')
+    # print(f'Loaded {df.count()} Records in warehouse')
     
     # print('MCC load complete')
     print(f'Moving {landing_file} to {processed_file}')
